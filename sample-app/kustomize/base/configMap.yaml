@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: map
+data:
+  altGreeting: "Good Morning! from base"
+  enableRisky: "true"

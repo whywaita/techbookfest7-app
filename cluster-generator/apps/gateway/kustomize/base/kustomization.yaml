@@ -1,0 +1,7 @@
+namespace: cluster-generator
+resources:
+- deployment.yaml
+- service.yaml
+- secret.yaml
+- namespace.yaml
+- ingress.yaml

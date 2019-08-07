@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: gateway-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: prd-cluster-generator-api
+spec:
+  tls:
+  - secretName: wildcard-your-domain.com
+  rules:
+  - http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: gateway-service
+          servicePort: 80

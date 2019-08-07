@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment
+spec:
+  selector:
+    matchLabels:
+      app: gateway
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: gateway
+        update: "1"
+    spec:
+      containers:
+      - name: gateway
+        image: asia.gcr.io/sample-project-name/gateway:latest
+        command: ["/usr/local/bin/gateway"]
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          httpGet:
+            port: 80
+            path: /healthy
+        env:
+        - name: GITHUB_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: gateway-secret
+              key: github-secret
+        - name: KUSTOMIZATION_URL
+          valueFrom:
+            secretKeyRef:
+              name: gateway-secret
+              key: kustomization-url
+        - name: TERRAFORMING_URL
+          valueFrom:
+            secretKeyRef:
+              name: gateway-secret
+              key: terraforming-url

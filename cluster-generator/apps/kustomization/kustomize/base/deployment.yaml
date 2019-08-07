@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kustomization
+spec:
+  selector:
+    matchLabels:
+      app: kustomization
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kustomization
+    spec:
+      containers:
+      - name: kustomization
+        image: asia.gcr.io/sample-project-name/kustomization:latest
+        command: ["/usr/local/bin/kustomization"]
+        ports:
+        - containerPort: 3030
+        env:
+        - name: GIT_USER
+          valueFrom:
+            secretKeyRef:
+              name: kustomization-secret
+              key: git-user
+        - name: PERSONAL_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: kustomization-secret
+              key: personal-token
+        - name: GCP_PROJECT
+          valueFrom:
+            secretKeyRef:
+              name: kustomization-secret
+              key: gcp-project
+        - name: GCP_USER
+          valueFrom:
+            secretKeyRef:
+              name: kustomization-secret
+              key: gcp-user
+        volumeMounts:
+        - name: credentialsdb
+          mountPath: "/root/.config/gcloud/credentials.db.bak"
+          subPath: credentials.db
+        - name: application-default-credentials
+          mountPath: "/root/.config/gcloud/application_default_credentials.json"
+          subPath: application_default_credentials.json
+      volumes:
+      - name: credentialsdb
+        secret:
+          secretName: credential
+      - name: application-default-credentials
+        secret:
+          secretName: application-default-credentials

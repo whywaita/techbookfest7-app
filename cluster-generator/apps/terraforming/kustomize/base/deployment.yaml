@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: terraforming
+spec:
+  selector:
+    matchLabels:
+      app: terraforming
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: terraforming
+    spec:
+      containers:
+      - name: terraforming
+        image: asia.gcr.io/sample-project-name/terraforming:latest
+        command: ["/usr/local/bin/terraforming"]
+        ports:
+        - containerPort: 3040
+        env:
+        - name: GIT_USER
+          valueFrom:
+            secretKeyRef:
+              name: terraforming-secret
+              key: git-user
+        - name: PERSONAL_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: terraforming-secret
+              key: personal-token
+        - name: TERRAFORM_PATH
+          valueFrom:
+            secretKeyRef:
+              name: terraforming-secret
+              key: terraform-path
+        volumeMounts:
+        - name: credentialsdb
+          mountPath: "/root/.config/gcloud/credentials.db"
+          subPath: credentials.db
+        - name: application-default-credentials
+          mountPath: "/root/.config/gcloud/application_default_credentials.json"
+          subPath: application_default_credentials.json
+      volumes:
+      - name: credentialsdb
+        secret:
+          secretName: credential
+      - name: application-default-credentials
+        secret:
+          secretName: application-default-credentials
